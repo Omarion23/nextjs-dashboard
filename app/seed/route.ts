@@ -80,6 +80,13 @@ async function seedCustomers() {
   return insertedCustomers;
 }
 
+async function listIncome() {
+  return client.sql`SELECT invoices.amount, customers.name
+FROM invoices
+JOIN customers ON invoices.customer_id = customers.id
+WHERE invoices.amount = 666;`
+}
+
 async function seedRevenue() {
   await client.sql`
     CREATE TABLE IF NOT EXISTS revenue (
@@ -102,7 +109,7 @@ async function seedRevenue() {
 }
 
 export async function GET() {
-  
+
   try {
     await client.sql`BEGIN`;
     await seedUsers();
@@ -111,9 +118,9 @@ export async function GET() {
     await seedRevenue();
     await client.sql`COMMIT`;
 
-   //return Response.json({ message: 'Database seeded successfully' });
+    return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
     await client.sql`ROLLBACK`;
-    //return Response.json({ error }, { status: 500 });
+    return Response.json({ error }, { status: 500 });
   }
 }
